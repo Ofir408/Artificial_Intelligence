@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,6 +55,7 @@ public class InputTextReader {
 			System.out.println("Problem into InputTextReader, getDataFromLine()");
 			return null;
 		}
+		featuresAndTag.setTagKey(featuresAndTagNames.get(length - 1));
 		featuresAndTag.setTag(featuresAndTagValues.get(length - 1));
 		for (int i = 0; i < length - 1; i++) {
 			String currentFeatureName = featuresAndTagNames.get(i);

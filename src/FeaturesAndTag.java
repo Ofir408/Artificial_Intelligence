@@ -10,7 +10,7 @@ import java.util.Map;
 public class FeaturesAndTag {
 	// members
 	private Map<String, String> features = new HashMap<String, String>();
-	private String tag;
+	private String tag, tagKey; 
 
 	// constructors.
 	public FeaturesAndTag() {
@@ -39,6 +39,14 @@ public class FeaturesAndTag {
 
 	public String getTag() {
 		return tag;
+	}
+	
+	public String getTagKey() {
+		return tagKey;
+	}
+	
+	public void setTagKey(String tagKey) {
+		this.tagKey = tagKey;
 	}
 
 	public void setTag(String tag) {
