@@ -8,6 +8,12 @@ import java.util.Map;
  *
  */
 public class FeaturesAndTag {
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		FeaturesAndTag f = new FeaturesAndTag(features, tag);
+		return f;
+	}
+
 	// members
 	private Map<String, String> features = new HashMap<String, String>();
 	private String tag, tagKey; 

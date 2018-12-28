@@ -11,7 +11,15 @@ public class NaiveBaseTest {
 
 		List<FeaturesAndTag> trainingList = inputTextReaderTrain.getDataFromFile();
 		List<FeaturesAndTag> testList = inputTextReaderTest.getDataFromFile();
-		List<FeaturesAndTag> realTagList = inputTextReaderTest.getDataFromFile();
+		List<FeaturesAndTag> realTagList = new ArrayList<>();
+		for (FeaturesAndTag f : testList)
+			try {
+				// optimizations,  avoid reading the file twice.
+				realTagList.add((FeaturesAndTag) f.clone());
+			} catch (CloneNotSupportedException e) {
+				realTagList = inputTextReaderTest.getDataFromFile();
+			}
+		
 		for (FeaturesAndTag f : testList)
 			f.setTag("");
 
