@@ -22,13 +22,28 @@ public class Attribute {
 		this.featuresToAttributeMap = featuresToAttributeMap;
 	}
 	
+	public Attribute(Map<String, Attribute> featuresToAttributeMap, String leaf) {
+		this.leafValue = leaf;
+		this.featuresToAttributeMap = featuresToAttributeMap;
+	}
+	
 	public String getLeafValue() {
 		if (!isLeaf())
 			System.out.println("Not a leaf");
 		return leafValue;
 	}
+	
+	public void setLeaf(String leafValue) {
+		this.leafValue = leafValue; 
+	}
+	
 	public boolean isLeaf() {
 		return leafValue != null; 
+	}
+	
+	public void addToMap(String attrKey, String attrValue, Attribute attribute) {
+		String updatedKey = attrKey + "=" + attrValue; 
+		featuresToAttributeMap.put(updatedKey, attribute);
 	}
 	
 	public Attribute getNextAttribute(String key) {

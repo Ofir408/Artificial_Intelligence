@@ -1,6 +1,8 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 
@@ -17,7 +19,7 @@ public class DecisionTree extends AbstractAlgorithm {
 
 	@Override
 	protected void predict(FeaturesAndTag inputFeatures) {
-		// convert to the Attribute key format
+		// convert to Attribute key format
 		List<String> keys = new ArrayList<>();
 		Map<String, String> inputFeaturesMap = inputFeatures.getFeatures();
 		for (Map.Entry<String, String> entry : inputFeaturesMap.entrySet()) {
@@ -43,9 +45,74 @@ public class DecisionTree extends AbstractAlgorithm {
 		return key + "=" + value;
 	}
 
-	private double entrofy(String key) {
-		double value = 0.0;
+	// Choose the next Attribute with the best Gain value.
+	private String chooseAttribute(List<FeaturesAndTag> updatedExamples, List<String> remaningFeaturesName,
+			String lastChosenFeature) {
+		double maxGain = 0.0;
+		String maxGainFeature = null;
+		for (String currRemaningFeature : remaningFeaturesName) {
+			double currentGainValue = gain(updatedExamples, lastChosenFeature, currRemaningFeature);
+			System.out.println("currRemaningFeature is: " + currRemaningFeature + ", currentGainValue: " + currentGainValue);
+			if (currentGainValue > maxGain) {
+				maxGain = currentGainValue;
+				maxGainFeature = currRemaningFeature;
+			}
+		}
+		remaningFeaturesName.remove(maxGainFeature); // remove the feature that
+														// was chosen.
+		return maxGainFeature;
+	}
 
+	// get the Gain
+	// Gain (Decision | otherAttrKey)
+	private double gain(List<FeaturesAndTag> updatedExamples, String decisionKey, String otherAttrKey) {
+		double gainResult = 0.0;
+		System.out.println("decisionKey is: " + decisionKey);
+		gainResult += entrofy(updatedExamples, decisionKey);
+		System.out.println("gainResult is: " + gainResult);
+
+		List<String> otherAttrPossibleValues = getPossibleValueOptions(updatedExamples, otherAttrKey);
+		int updatedExamplesLength = updatedExamples.size();
+		for (String otherAttrCurrentVal : otherAttrPossibleValues) {
+			double currProb = (double) valueOccuranceCounter(updatedExamples, otherAttrKey, otherAttrCurrentVal)
+					/ updatedExamplesLength;
+			double currEntropy = stepInEntropy(updatedExamples, otherAttrKey, otherAttrCurrentVal);
+			gainResult += currProb * currEntropy;
+		}
+		return gainResult;
+	}
+
+	// calculate Entrofy(Decision | OtherAttr = something), when the
+	// updatedExamples list is the features that
+	// according OtherAttr = something.
+	private double entrofy(List<FeaturesAndTag> updatedExamples, String decisionKey) {
+		double result = 0.0;
+		List<String> keyPossibleValues = this.getPossibleValueOptions(updatedExamples, decisionKey);
+		for (String currentValue : keyPossibleValues) {
+			result += stepInEntropy(updatedExamples, decisionKey, currentValue);
+		}
+		return result;
+	}
+
+	// calculate P(Decision | OtherAttr = something), when the updatedExamples
+	// list is the features that
+	// according OtherAttr = something.
+	private double probCalc(List<FeaturesAndTag> updatedExamples, String key, String valueOfKey) {
+		double existsCounter = 0.0;
+		double totalCounter = 0.0;
+		for (FeaturesAndTag f : updatedExamples) {
+			Map<String, String> features = f.getFeatures();
+			if (features.containsKey(key)) {
+				if (features.get(key).equals(valueOfKey))
+					existsCounter++;
+				totalCounter++;
+			}
+		}
+		return existsCounter / totalCounter;
+	}
+
+	private double log2(double num) {
+		return Math.log(num) / Math.log(2.0);
 	}
 
 	private List<String> getPossibleTagOptions() {
@@ -58,20 +125,51 @@ public class DecisionTree extends AbstractAlgorithm {
 		return tags;
 	}
 
-	private int valueOccuranceCounter(String key, String valueToSearch) {
+	private double stepInEntropy(List<FeaturesAndTag> updatedExamples, String key, String value) {
+		// calculate the probability of each option.
+		double prob = (double) valueOccuranceCounter(updatedExamples, key, value) / updatedExamples.size();
+		double result = -prob * log2(prob);
+		return result;
+	}
+
+	private List<String> getPossibleValueOptions(List<FeaturesAndTag> updateExamples, String key) {
+		List<String> valuesList = new ArrayList<>();
+		for (FeaturesAndTag f : updateExamples) {
+			Map<String, String> features = f.getFeatures();
+			if (features.containsKey(key)) {
+				String value = features.get(key);
+				if (!valuesList.contains(value))
+					valuesList.add(value);
+			} else {
+				// check if this is the TAG
+				if (f.getTagKey().equals(key)) {
+					String value = f.getTag();
+					if (!valuesList.contains(value))
+						valuesList.add(value);
+				}
+			}
+		}
+		return valuesList;
+	}
+
+	private int valueOccuranceCounter(List<FeaturesAndTag> updateExamples, String key, String valueToSearch) {
 		int counter = 0;
-		for (FeaturesAndTag f : trainingList) {
+		for (FeaturesAndTag f : updateExamples) {
 			Map<String, String> currentMap = f.getFeatures();
-			if (currentMap.containsKey(key) && currentMap.get(key).equals(valueToSearch)) {
+			if (f.getTagKey().equals(key)) {
+				if (f.getTag().equals(valueToSearch))
+					counter++; 
+			} else if (currentMap.containsKey(key) && currentMap.get(key).equals(valueToSearch)) {
 				counter++;
 			}
 		}
 		return counter;
 	}
 
-	private List<FeaturesAndTag> getPartialListAccordingValue(String key, String valueToSearch) {
+	private List<FeaturesAndTag> getPartialListAccordingValue(List<FeaturesAndTag> updatedList, String key,
+			String valueToSearch) {
 		List<FeaturesAndTag> partialList = new ArrayList<>();
-		for (FeaturesAndTag f : trainingList) {
+		for (FeaturesAndTag f : updatedList) {
 			Map<String, String> currentMap = f.getFeatures();
 			if (currentMap.containsKey(key) && currentMap.get(key).equals(valueToSearch)) {
 				partialList.add(f);
@@ -80,8 +178,70 @@ public class DecisionTree extends AbstractAlgorithm {
 		return partialList;
 	}
 
-	private Attribute createTreeFromTrainingSet() {
+	// private String chooseAttribute(List<FeaturesAndTag> updatedExamples,
+	// List<String> remaningFeaturesName, String lastChosenFeature) {
 
+	private Attribute createTreeFromTrainingSet() {
+		// get the features name.
+		List<String> featuresNames = new ArrayList<>();
+		List<FeaturesAndTag> trainingExamples = new ArrayList<>();
+		if (!trainingList.isEmpty()) {
+			Set<String> names = trainingList.get(0).getFeatures().keySet();
+			for (String name : names)
+				featuresNames.add(name);
+		}
+
+		// clone the training list, since we don't want to change it.
+		for (FeaturesAndTag f : trainingList) {
+			try {
+				FeaturesAndTag featuresAndTag = (FeaturesAndTag) f.clone();
+				featuresAndTag.setTagKey(f.getTagKey());
+				trainingExamples.add(featuresAndTag);
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
+		}
+		return createTreeRecursive(trainingExamples, featuresNames, trainingExamples.get(0).getTagKey());
+
+	}
+
+	private Attribute createTreeRecursive(List<FeaturesAndTag> examples, List<String> featureNames,
+			String lastChosenFeature) {
+		// stop conditions
+		if (haveSameTag(examples) && !examples.isEmpty())
+			return new Attribute(new HashMap<>(), examples.get(0).getTag());
+
+		// otherwise:
+		String bestGainFeature = chooseAttribute(examples, featureNames, lastChosenFeature);
+		lastChosenFeature = bestGainFeature;
+		Attribute tree = new Attribute(new HashMap<>());
+		System.out.println("bestGainFeature is: " + bestGainFeature);
+		List<String> possibleValueOfFeature = getPossibleValueOptions(examples, bestGainFeature);
+		for (String value : possibleValueOfFeature) {
+			List<FeaturesAndTag> updatedExamples = getPartialListAccordingValue(examples, bestGainFeature, value);
+			Attribute subTree = createTreeRecursive(updatedExamples, featureNames, lastChosenFeature);
+			tree.addToMap(bestGainFeature, value, subTree);
+			System.out.println("Added to map");
+		}
+
+		return tree;
+	}
+
+	// return true if the whole input examples have the same classification.
+	private boolean haveSameTag(List<FeaturesAndTag> examples) {
+		boolean sameTag = true;
+		String tagForSearch = "";
+		if (!examples.isEmpty())
+			tagForSearch = examples.get(0).getTag();
+
+		for (FeaturesAndTag f : examples) {
+			if (!tagForSearch.equals(f.getTag())) {
+				sameTag = false;
+				break;
+			}
+		}
+
+		return sameTag;
 	}
 
 }
