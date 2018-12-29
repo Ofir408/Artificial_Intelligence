@@ -46,6 +46,10 @@ public class Attribute {
 		featuresToAttributeMap.put(updatedKey, attribute);
 	}
 	
+	public boolean isExistsInMap(String key) {
+		return featuresToAttributeMap.containsKey(key);
+	}
+	
 	public Attribute getNextAttribute(String key) {
 		if (featuresToAttributeMap.containsKey(key))
 			return featuresToAttributeMap.get(key);

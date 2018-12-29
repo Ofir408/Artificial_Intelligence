@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 /**
  * 
@@ -28,13 +29,32 @@ public class DecisionTree extends AbstractAlgorithm {
 
 		try {
 			Attribute currentAttribute = (Attribute) attribute.clone();
-			for (String k : keys) {
+			List<String> keyDuplicate = new ArrayList<>(keys);
+
+			while (!keyDuplicate.isEmpty()) {
 				if (currentAttribute.isLeaf()) {
 					String tag = currentAttribute.getLeafValue();
+					System.out.println("set_the_tag");
 					inputFeatures.setTag(tag);
 					return;
 				}
-				currentAttribute = (Attribute) currentAttribute.getNextAttribute(k).clone();
+				keys.clear();
+				keys = new ArrayList<>(keyDuplicate);
+
+				for (String k : keys) {
+					if (keyDuplicate.contains(k) && currentAttribute.isExistsInMap(k)) {
+						keyDuplicate.remove(k);
+
+						currentAttribute = (Attribute) currentAttribute.getNextAttribute(k);
+						if (currentAttribute.isLeaf()) {
+							String tag = currentAttribute.getLeafValue();
+							System.out.println("set_the_tag");
+							inputFeatures.setTag(tag);
+							return;
+						}
+						break;
+					}
+				}
 			}
 		} catch (CloneNotSupportedException c) {
 		}
@@ -52,7 +72,8 @@ public class DecisionTree extends AbstractAlgorithm {
 		String maxGainFeature = null;
 		for (String currRemaningFeature : remaningFeaturesName) {
 			double currentGainValue = gain(updatedExamples, lastChosenFeature, currRemaningFeature);
-			System.out.println("currRemaningFeature is: " + currRemaningFeature + ", currentGainValue: " + currentGainValue);
+			System.out.println(
+					"currRemaningFeature is: " + currRemaningFeature + ", currentGainValue: " + currentGainValue);
 			if (currentGainValue > maxGain) {
 				maxGain = currentGainValue;
 				maxGainFeature = currRemaningFeature;
@@ -73,11 +94,12 @@ public class DecisionTree extends AbstractAlgorithm {
 
 		List<String> otherAttrPossibleValues = getPossibleValueOptions(updatedExamples, otherAttrKey);
 		int updatedExamplesLength = updatedExamples.size();
-		for (String otherAttrCurrentVal : otherAttrPossibleValues) {
-			double currProb = (double) valueOccuranceCounter(updatedExamples, otherAttrKey, otherAttrCurrentVal)
+		for (String otherCurrentVal : otherAttrPossibleValues) {
+			double currProb = (double) valueOccuranceCounter(updatedExamples, otherAttrKey, otherCurrentVal)
 					/ updatedExamplesLength;
-			double currEntropy = stepInEntropy(updatedExamples, otherAttrKey, otherAttrCurrentVal);
-			gainResult += currProb * currEntropy;
+			List<FeaturesAndTag> updated = getPartialListAccordingValue(updatedExamples, otherAttrKey, otherCurrentVal);
+			double currEntropy = entrofy(updated, decisionKey);
+			gainResult -= currProb * currEntropy;
 		}
 		return gainResult;
 	}
@@ -87,6 +109,8 @@ public class DecisionTree extends AbstractAlgorithm {
 	// according OtherAttr = something.
 	private double entrofy(List<FeaturesAndTag> updatedExamples, String decisionKey) {
 		double result = 0.0;
+		// List<FeaturesAndTag> updated =
+		// getPartialListAccordingValue(updatedExamples, key, valueToSearch)
 		List<String> keyPossibleValues = this.getPossibleValueOptions(updatedExamples, decisionKey);
 		for (String currentValue : keyPossibleValues) {
 			result += stepInEntropy(updatedExamples, decisionKey, currentValue);
@@ -158,7 +182,7 @@ public class DecisionTree extends AbstractAlgorithm {
 			Map<String, String> currentMap = f.getFeatures();
 			if (f.getTagKey().equals(key)) {
 				if (f.getTag().equals(valueToSearch))
-					counter++; 
+					counter++;
 			} else if (currentMap.containsKey(key) && currentMap.get(key).equals(valueToSearch)) {
 				counter++;
 			}
@@ -204,6 +228,30 @@ public class DecisionTree extends AbstractAlgorithm {
 		return createTreeRecursive(trainingExamples, featuresNames, trainingExamples.get(0).getTagKey());
 
 	}
+	private String getMostFreq(List<FeaturesAndTag> examples) {
+		List<String> tags = new ArrayList<>();
+		for (FeaturesAndTag f : examples) {
+			tags.add(f.getTag());
+		}
+		String result = getMostFrequentFromList(tags);
+		return result;
+	}
+	
+	// given a list in length K, returns the most frequent value.
+	private <T> T getMostFrequentFromList(List<T> list) {
+		Map<T, Integer> map = new HashMap<>();
+
+		for (T t : list) {
+			Integer val = map.get(t);
+			map.put(t, val == null ? 1 : val + 1);
+		}
+		Entry<T, Integer> max = null;
+		for (Entry<T, Integer> e : map.entrySet()) {
+			if (max == null || e.getValue() > max.getValue())
+				max = e;
+		}
+		return max.getKey();
+	}
 
 	private Attribute createTreeRecursive(List<FeaturesAndTag> examples, List<String> featureNames,
 			String lastChosenFeature) {
@@ -211,11 +259,19 @@ public class DecisionTree extends AbstractAlgorithm {
 		if (haveSameTag(examples) && !examples.isEmpty())
 			return new Attribute(new HashMap<>(), examples.get(0).getTag());
 
+		if (featureNames.isEmpty()) {
+			// make prediction according the most frequent tag between the
+			// examples.
+			String tag = getMostFreq(examples);
+			return new Attribute(new HashMap<>(), tag);
+		}
+
 		// otherwise:
 		String bestGainFeature = chooseAttribute(examples, featureNames, lastChosenFeature);
-		lastChosenFeature = bestGainFeature;
+		// lastChosenFeature = bestGainFeature;
 		Attribute tree = new Attribute(new HashMap<>());
 		System.out.println("bestGainFeature is: " + bestGainFeature);
+		
 		List<String> possibleValueOfFeature = getPossibleValueOptions(examples, bestGainFeature);
 		for (String value : possibleValueOfFeature) {
 			List<FeaturesAndTag> updatedExamples = getPartialListAccordingValue(examples, bestGainFeature, value);
@@ -223,7 +279,6 @@ public class DecisionTree extends AbstractAlgorithm {
 			tree.addToMap(bestGainFeature, value, subTree);
 			System.out.println("Added to map");
 		}
-
 		return tree;
 	}
 
