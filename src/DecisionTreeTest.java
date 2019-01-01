@@ -30,6 +30,7 @@ public class DecisionTreeTest {
 		
 		double acc = AccuracyCalculator.calcAccuracy(realTagList, testList);
 		System.out.println(" acc is: " + acc);
+		
 	}
 
 }

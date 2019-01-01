@@ -16,6 +16,8 @@ public class DecisionTree extends AbstractAlgorithm {
 	public DecisionTree(List<FeaturesAndTag> trainingList) {
 		super(trainingList);
 		attribute = createTreeFromTrainingSet();
+		// write the Decision tree to a file
+		TreeWriter.writeToFile(attribute);
 	}
 
 	@Override

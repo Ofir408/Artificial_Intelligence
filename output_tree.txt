@@ -1,0 +1,8 @@
+| sex=male
+	| pclass=2nd
+	| age=adult:no
+| age=child:yes
+| pclass=3rd:no
+| pclass=crew:no
+| pclass=1st:no
+| sex=female:yes

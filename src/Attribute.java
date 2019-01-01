@@ -57,6 +57,8 @@ public class Attribute {
 		return null;
 	}
 	
-	
+	public Map<String, Attribute> getMap() {
+		return featuresToAttributeMap; 
+	}
 
 }
