@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +13,7 @@ import java.util.Map.Entry;
 public class DecisionTree extends AbstractAlgorithm {
 	private static Attribute attribute;
 
+	// constructor.
 	public DecisionTree(List<FeaturesAndTag> trainingList) {
 		super(trainingList);
 		attribute = createTreeFromTrainingSet();
@@ -21,6 +21,7 @@ public class DecisionTree extends AbstractAlgorithm {
 		TreeWriter.writeToFile(attribute);
 	}
 
+	// predict the tag of inputFeatures.
 	@Override
 	protected void predict(FeaturesAndTag inputFeatures) {
 		// convert to Attribute key format
@@ -64,6 +65,7 @@ public class DecisionTree extends AbstractAlgorithm {
 
 	}
 
+	// return the format of attribute key & value.
 	private String getAttrKeyFormat(String key, String value) {
 		return key + "=" + value;
 	}
@@ -82,8 +84,6 @@ public class DecisionTree extends AbstractAlgorithm {
 				maxGainFeature = currRemaningFeature;
 			}
 		}
-		//remaningFeaturesName.remove(maxGainFeature); // remove the feature that
-														// was chosen.
 		return maxGainFeature;
 	}
 
@@ -112,8 +112,6 @@ public class DecisionTree extends AbstractAlgorithm {
 	// according OtherAttr = something.
 	private double entrofy(List<FeaturesAndTag> updatedExamples, String decisionKey) {
 		double result = 0.0;
-		// List<FeaturesAndTag> updated =
-		// getPartialListAccordingValue(updatedExamples, key, valueToSearch)
 		List<String> keyPossibleValues = this.getPossibleValueOptions(updatedExamples, decisionKey);
 		for (String currentValue : keyPossibleValues) {
 			result += stepInEntropy(updatedExamples, decisionKey, currentValue);
@@ -121,37 +119,12 @@ public class DecisionTree extends AbstractAlgorithm {
 		return result;
 	}
 
-	// calculate P(Decision | OtherAttr = something), when the updatedExamples
-	// list is the features that
-	// according OtherAttr = something.
-	private double probCalc(List<FeaturesAndTag> updatedExamples, String key, String valueOfKey) {
-		double existsCounter = 0.0;
-		double totalCounter = 0.0;
-		for (FeaturesAndTag f : updatedExamples) {
-			Map<String, String> features = f.getFeatures();
-			if (features.containsKey(key)) {
-				if (features.get(key).equals(valueOfKey))
-					existsCounter++;
-				totalCounter++;
-			}
-		}
-		return existsCounter / totalCounter;
-	}
-
+	// return log2(num)
 	private double log2(double num) {
 		return Math.log(num) / Math.log(2.0);
 	}
 
-	private List<String> getPossibleTagOptions() {
-		List<String> tags = new ArrayList<>();
-		for (FeaturesAndTag f : trainingList) {
-			String currentTag = f.getTag();
-			if (!tags.contains(currentTag))
-				tags.add(currentTag);
-		}
-		return tags;
-	}
-
+	// make a step in Entropy calculation and return the result.
 	private double stepInEntropy(List<FeaturesAndTag> updatedExamples, String key, String value) {
 		// calculate the probability of each option.
 		double prob = (double) valueOccuranceCounter(updatedExamples, key, value) / updatedExamples.size();
@@ -159,6 +132,7 @@ public class DecisionTree extends AbstractAlgorithm {
 		return result;
 	}
 
+	// getPossibleValueOptions of key on updateExamples.
 	private List<String> getPossibleValueOptions(List<FeaturesAndTag> updateExamples, String key) {
 		List<String> valuesList = new ArrayList<>();
 		for (FeaturesAndTag f : updateExamples) {
@@ -179,6 +153,7 @@ public class DecisionTree extends AbstractAlgorithm {
 		return valuesList;
 	}
 
+	// return the Occurance number of valueToSearch in updateExamples.
 	private int valueOccuranceCounter(List<FeaturesAndTag> updateExamples, String key, String valueToSearch) {
 		int counter = 0;
 		for (FeaturesAndTag f : updateExamples) {
@@ -193,6 +168,7 @@ public class DecisionTree extends AbstractAlgorithm {
 		return counter;
 	}
 
+	// getPartialListAccordingValue of values the features that has key & valueToSearch
 	private List<FeaturesAndTag> getPartialListAccordingValue(List<FeaturesAndTag> updatedList, String key,
 			String valueToSearch) {
 		List<FeaturesAndTag> partialList = new ArrayList<>();
@@ -204,9 +180,6 @@ public class DecisionTree extends AbstractAlgorithm {
 		}
 		return partialList;
 	}
-
-	// private String chooseAttribute(List<FeaturesAndTag> updatedExamples,
-	// List<String> remaningFeaturesName, String lastChosenFeature) {
 
 	private Attribute createTreeFromTrainingSet() {
 		// get the features name.
@@ -228,9 +201,11 @@ public class DecisionTree extends AbstractAlgorithm {
 				e.printStackTrace();
 			}
 		}
-		return createTreeRecursive(trainingExamples, featuresNames, trainingExamples.get(0).getTagKey());
+		return createTreeRecursive(trainingExamples, featuresNames, trainingExamples.get(0).getTagKey(), "");
 
 	}
+	
+	// getMostFrequency tag in examples.
 	private String getMostFreq(List<FeaturesAndTag> examples) {
 		System.out.println("getMostFreq wad called");
 		List<String> tags = new ArrayList<>();
@@ -257,11 +232,12 @@ public class DecisionTree extends AbstractAlgorithm {
 		return max.getKey();
 	}
 
+	// the recursive function that creates the Decision tree.
 	private Attribute createTreeRecursive(List<FeaturesAndTag> examples, List<String> featureNames,
-			String lastChosenFeature) {
+			String lastChosenFeature, String fatherTag) {
 		// stop conditions
 		if (examples.size() == 0)
-			System.exit(-3);
+			return new Attribute(new HashMap<>(), fatherTag);
 		if (haveSameTag(examples) && !examples.isEmpty())
 			return new Attribute(new HashMap<>(), examples.get(0).getTag());
 
@@ -290,7 +266,7 @@ public class DecisionTree extends AbstractAlgorithm {
 
 			List<FeaturesAndTag> updatedExamples = getPartialListAccordingValue(examples, bestGainFeature, value);
 			featureNames.remove(bestGainFeature);
-			Attribute subTree = createTreeRecursive(updatedExamples, featureNames, lastChosenFeature);
+			Attribute subTree = createTreeRecursive(updatedExamples, featureNames, lastChosenFeature, getMostFreq(examples));
 			System.out.println("value is: " + value);
 			tree.addToMap(bestGainFeature, value, subTree);
 			System.out.println("Added to map");

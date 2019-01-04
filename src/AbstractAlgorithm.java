@@ -15,6 +15,7 @@ public abstract class AbstractAlgorithm {
 	// set into inputFeatures his tag.
 	protected abstract void predict(FeaturesAndTag inputFeatures);
 	
+	// get inputFeaturesList (test list) and add them the predicted tags.
 	public void predictOnTest(List<FeaturesAndTag> inputFeaturesList) {
 		for (FeaturesAndTag f : inputFeaturesList) 
 			predict(f);

@@ -15,11 +15,13 @@ public class Knn extends AbstractAlgorithm {
 
 	private int k;
 
+	// Constructor.
 	public Knn(List<FeaturesAndTag> trainingList, int k) {
 		super(trainingList);
 		this.k = k;
 	}
 	
+	// FeaturesWithPrices is a class that extends FeaturesAndTag and contains the price of this example.
 	private class FeaturesWithPrices extends FeaturesAndTag implements Comparable<FeaturesWithPrices>{
 		private int cost; 
 		
@@ -97,6 +99,7 @@ public class Knn extends AbstractAlgorithm {
 		return max.getKey();
 	}
 
+	// return 1 if different, 0 if equals.
 	private <T> int getPrice(T first, T second) {
 		if (first.equals(second))
 			return 0; // equals, the distance is zero

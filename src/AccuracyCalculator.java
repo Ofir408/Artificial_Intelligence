@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class AccuracyCalculator {
 	
+	// return the accuracy of the predValues on the test.
 	public static double calcAccuracy(List<FeaturesAndTag> realValues, List<FeaturesAndTag> predValues) {
 		double currentPredCounter = 0; 
 		int commonLength = realValues.size();

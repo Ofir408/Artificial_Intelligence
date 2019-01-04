@@ -9,10 +9,12 @@ import java.util.List;
  * @author Ofir Ben Shoham Write the result (predicted tags) to a text file.
  */
 public class ResultsWriter {
+	// constants.
 	private static final String fileName = "output.txt";
 	private static final String seperator = "\t";
 	private static final String lineSeperator = "\r\n";
 
+	// write the results into the text file.
 	public static void writeResults(List<FeaturesAndTag> dt, List<FeaturesAndTag> knn, List<FeaturesAndTag> nb,
 			List<FeaturesAndTag> real) {
 		int totalRowsToWrite = dt.size();
@@ -47,6 +49,7 @@ public class ResultsWriter {
 		writer.close(); // close the fd.
 	}
 
+	// write the Accuracy in the text file.
 	private static void writeAccuracy(PrintWriter writer, List<FeaturesAndTag> real, List<FeaturesAndTag> predicted,
 			boolean isLast) {
 		double accuracy = AccuracyCalculator.calcAccuracy(real, predicted);
@@ -60,6 +63,7 @@ public class ResultsWriter {
 		}
 	}
 
+	// write one line.
 	private static void writeCurrentLine(PrintWriter writer, int lineNum, String dtTag, String knnTag, String nbTag) {
 		writer.append(String.valueOf(lineNum + 1) + seperator);
 		writer.append(dtTag + seperator);
@@ -67,6 +71,7 @@ public class ResultsWriter {
 		writer.append(nbTag + lineSeperator);
 	}
 
+	// get tag of FeaturesAndTag object.
 	private static String getTag(FeaturesAndTag f) {
 		return f.getTag();
 	}

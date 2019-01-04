@@ -19,6 +19,7 @@ public class InputTextReader {
 		this.fileName = name;
 	}
 
+	// return List<FeaturesAndTag>, each FeaturesAndTag is the features from the input txt file.
 	public List<FeaturesAndTag> getDataFromFile() throws IOException {
 		List<FeaturesAndTag> listToReturn = new ArrayList<>();
 		try (BufferedReader br = new BufferedReader(new FileReader(this.fileName))) {
@@ -48,6 +49,7 @@ public class InputTextReader {
 		return getDataHelper(featuresAndTagNames, featuresAndTagValues);
 	}
 
+	// helper function.
 	private FeaturesAndTag getDataHelper(List<String> featuresAndTagNames, List<String> featuresAndTagValues) {
 		FeaturesAndTag featuresAndTag = new FeaturesAndTag();
 		int length = featuresAndTagNames.size();

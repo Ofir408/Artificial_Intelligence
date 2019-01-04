@@ -32,6 +32,7 @@ public class TreeWriter {
 		writer.close();
 	}
 
+	// generate the string to write, result was saved into str.
 	private static void generateString(StringBuilder str, Attribute attribute, int fatherTabs) {
 		// System.out.println("here");
 		Map<String, Attribute> map = attribute.getMap();

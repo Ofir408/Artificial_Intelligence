@@ -39,6 +39,7 @@ public class FeaturesAndTag {
 		return features;
 	}
 
+	// getters & setters.
 	public void setFeatures(Map<String, String> features) {
 		this.features = features;
 	}

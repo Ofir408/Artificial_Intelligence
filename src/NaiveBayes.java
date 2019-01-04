@@ -13,6 +13,7 @@ public class NaiveBayes extends AbstractAlgorithm {
 		super(trainingList);
 	}
 
+	// predict the tag if inputFeatures.
 	@Override
 	protected void predict(FeaturesAndTag inputFeatures) {
 		double bestProb = -100000;
@@ -34,6 +35,7 @@ public class NaiveBayes extends AbstractAlgorithm {
 		inputFeatures.setTag(bestTag);
 	}
 
+	// return the valueOccuranceCounter of valueToSearch with key.
 	private int valueOccuranceCounter(String key, String valueToSearch) {
 		int counter = 0;
 		for (FeaturesAndTag f : trainingList) {
@@ -45,10 +47,10 @@ public class NaiveBayes extends AbstractAlgorithm {
 		return counter;
 	}
 
+	// return the tagOccuranceCounter of tagName on the training set.
 	private int tagOccuranceCounter(String tagName) {
 		System.out.println("tag name is: " + tagName);
 		int counter=0; 
-		List<String> possibleTags = this.getPossibleTagOptions();
 		for (FeaturesAndTag f : trainingList)
 			if (tagName.equals(f.getTag()))
 					counter ++; 
@@ -56,6 +58,7 @@ public class NaiveBayes extends AbstractAlgorithm {
 		return counter; 
 	}
 
+	// get Possible Tag Options from the training list.
 	private List<String> getPossibleTagOptions() {
 		List<String> tags = new ArrayList<>();
 		for (FeaturesAndTag f : trainingList) {
