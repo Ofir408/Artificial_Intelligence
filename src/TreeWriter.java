@@ -1,9 +1,10 @@
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.Comparator;
 import java.util.Map;
+import java.util.TreeMap;
 
-import javafx.beans.binding.StringBinding;
 
 /**
  * 
@@ -39,6 +40,7 @@ public class TreeWriter {
 		if (map == null)
 			return;
 		System.out.println(" map.entrySet() is: " + map.entrySet().size());
+		map = orderAccordingAlphabetical(map);
 		for (Map.Entry<String, Attribute> entry : map.entrySet()) {
 			System.out.println("here");
 			Attribute attr = entry.getValue();
@@ -53,4 +55,17 @@ public class TreeWriter {
 			}
 		}
 	}
+	
+	private static Map<String, Attribute> orderAccordingAlphabetical(Map<String, Attribute> map ) {
+        TreeMap<String, Attribute> sorted_map = new TreeMap<String, Attribute>(new ValueComparator()); 
+        sorted_map.putAll(map);
+        return sorted_map;
+	}
+	
+	private static class ValueComparator implements Comparator<String> {
+	    public int compare(String a, String b) {
+	       return a.compareTo(b);
+	    }
+	}
+
 }

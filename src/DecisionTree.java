@@ -260,10 +260,7 @@ public class DecisionTree extends AbstractAlgorithm {
 				
 		for (String value : possibleValueOfFeature) {
 			featureNames = new ArrayList<String>(fn);
-			if (value.equals("crew")) {
-				System.out.println("...");
-			}
-
+			
 			List<FeaturesAndTag> updatedExamples = getPartialListAccordingValue(examples, bestGainFeature, value);
 			featureNames.remove(bestGainFeature);
 			Attribute subTree = createTreeRecursive(updatedExamples, featureNames, lastChosenFeature, getMostFreq(examples));
