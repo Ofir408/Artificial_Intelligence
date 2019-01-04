@@ -24,28 +24,35 @@ public class TreeWriter {
 			e.printStackTrace();
 			return;
 		}
-		StringBuilder s = new StringBuilder(); 
+		StringBuilder s = new StringBuilder();
 
-		generateString(s, attribute);
-		System.out.println("S is: \n" +s.toString());
-		writer.print(s); 
+		generateString(s, attribute, false, true);
+		System.out.println("S is: \n" + s.toString());
+		writer.print(s);
 		writer.close();
 	}
 
-	
-	private static void generateString(StringBuilder str, Attribute attribute) {
-		if (attribute.isLeaf()) {
-			return; 
-		} else {
-			Map<String, Attribute> map = attribute.getMap();
-			for (Map.Entry<String, Attribute> entry : map.entrySet()) {
-				Attribute attr = entry.getValue();
-				if (attr.isLeaf()) {
-					str.append( "| " + entry.getKey() + ":" + attr.getLeafValue() + "\n");
-				} else {
-					str.append("| " + entry.getKey() + "\n" + "\t" );
-					TreeWriter.generateString(str, attr);
-				}
+	private static void generateString(StringBuilder str, Attribute attribute, boolean isSon, boolean isFirstIteration) {
+		// System.out.println("here");
+		Map<String, Attribute> map = attribute.getMap();
+		if (map == null)
+			return;
+		System.out.println(" map.entrySet() is: " + map.entrySet().size());
+		for (Map.Entry<String, Attribute> entry : map.entrySet()) {
+			System.out.println("here");
+			Attribute attr = entry.getValue();
+			if (attr.isLeaf()) {
+				if (isFirstIteration || isSon)
+					str.append("\t" + "| " + entry.getKey() + ":" + attr.getLeafValue() + "\n");
+				else
+					str.append("| " + entry.getKey() + ":" + attr.getLeafValue() + "\n");
+
+			} else {
+				if (isFirstIteration)
+					str.append("\t" + "| " + entry.getKey() + "\n");
+				else
+				str.append("| " + entry.getKey() + "\n");
+				TreeWriter.generateString(str, attr, true, false);
 			}
 		}
 	}

@@ -14,23 +14,26 @@ public class DecisionTreeTest {
 		List<FeaturesAndTag> realTagList = new ArrayList<>();
 		for (FeaturesAndTag f : testList)
 			try {
-				// optimizations,  avoid reading the file twice.
+				// optimizations, avoid reading the file twice.
 				realTagList.add((FeaturesAndTag) f.clone());
 			} catch (CloneNotSupportedException e) {
 				realTagList = inputTextReaderTest.getDataFromFile();
 			}
-		
+
 		for (FeaturesAndTag f : testList)
 			f.setTag("");
 
 		AbstractAlgorithm a = new DecisionTree(trainingList);
+		System.out.println("(1) ");
 		a.predictOnTest(testList);
+		System.out.println("(2) ");
+
 		for (FeaturesAndTag f : testList)
 			System.out.println("TAG is: " + f.getTag());
-		
+
 		double acc = AccuracyCalculator.calcAccuracy(realTagList, testList);
 		System.out.println(" acc is: " + acc);
-		
+
 	}
 
 }
