@@ -255,11 +255,13 @@ public class DecisionTree extends AbstractAlgorithm {
 		Attribute tree = new Attribute(new HashMap<>());
 		System.out.println("bestGainFeature is: " + bestGainFeature);
 		
-		List<String> possibleValueOfFeature = getPossibleValueOptions(examples, bestGainFeature);
+		List<String> possibleValueOfFeature = getPossibleValueOptions(trainingList, bestGainFeature);
 		List<String> fn = new ArrayList<String>(featureNames);
 				
 		for (String value : possibleValueOfFeature) {
 			featureNames = new ArrayList<String>(fn);
+			if (value.equals("crew"))
+				System.out.println("wewf");
 			
 			List<FeaturesAndTag> updatedExamples = getPartialListAccordingValue(examples, bestGainFeature, value);
 			featureNames.remove(bestGainFeature);

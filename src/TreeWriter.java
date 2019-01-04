@@ -42,7 +42,6 @@ public class TreeWriter {
 		System.out.println(" map.entrySet() is: " + map.entrySet().size());
 		map = orderAccordingAlphabetical(map);
 		for (Map.Entry<String, Attribute> entry : map.entrySet()) {
-			System.out.println("here");
 			Attribute attr = entry.getValue();
 			for (int i = 0; i < fatherTabs; i++)
 				str.append("\t");
