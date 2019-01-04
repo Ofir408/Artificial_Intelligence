@@ -7,7 +7,8 @@ public class TreeWriterTest {
 		Attribute a4 = new Attribute(null); a4.setLeaf("yes");
 		Attribute a3 = new Attribute(new HashMap<>());
 		Attribute a5 = new Attribute(null); a5.setLeaf("no");
-		Attribute a6 = new Attribute(null); a6.setLeaf("no");
+		Attribute a6 = new Attribute(new HashMap<>()); 
+		Attribute a7 = new Attribute(null); a7.setLeaf("yes");
 
 		a3.addToMap("a4Key", "a4Value", a4);
 
@@ -16,6 +17,7 @@ public class TreeWriterTest {
 		a1.addToMap("a2Key", "a2Value", a2);
 		a2.addToMap("a5Key", "a5Value", a5);
 		a2.addToMap("a6Key", "a6Value", a6);
+		a6.addToMap("a7Key", "a7Value", a7);
 
 
 		TreeWriter.writeToFile(a1);
