@@ -10,14 +10,14 @@ public class Main {
 
 		List<FeaturesAndTag> trainingList = inputTextReaderTrain.getDataFromFile();
 		List<FeaturesAndTag> testList = inputTextReaderTest.getDataFromFile();
-		List<FeaturesAndTag> t = inputTextReaderTest.getDataFromFile();
-		List<FeaturesAndTag> NBrealTagList = Main.predictOnTest(trainingList, inputTextReaderTest.getDataFromFile(), new NaiveBayes(trainingList));
-		List<FeaturesAndTag> KNNrealTagList = Main.predictOnTest(trainingList, inputTextReaderTest.getDataFromFile(), new Knn(trainingList, 5));
-		List<FeaturesAndTag> DTrealTagList = Main.predictOnTest(trainingList, inputTextReaderTest.getDataFromFile(), new DecisionTree(trainingList));
+		
+		List<FeaturesAndTag> KNNrealTagList = Main.predictOnTest(trainingList, cloneList(testList), new Knn(trainingList, 5));
+		List<FeaturesAndTag> DTrealTagList = Main.predictOnTest(trainingList, cloneList(testList), new DecisionTree(trainingList));
+		List<FeaturesAndTag> NBrealTagList = Main.predictOnTest(trainingList, cloneList(testList), new NaiveBayes(trainingList));
 
-		System.out.println(" NB acc is: " + AccuracyCalculator.calcAccuracy(t, NBrealTagList));
-		System.out.println(" KNN acc is: " + AccuracyCalculator.calcAccuracy(t, KNNrealTagList));
-		System.out.println(" DT acc is: " + AccuracyCalculator.calcAccuracy(t, DTrealTagList));
+		System.out.println(" NB acc is: " + AccuracyCalculator.calcAccuracy(testList, NBrealTagList));
+		System.out.println(" KNN acc is: " + AccuracyCalculator.calcAccuracy(testList, KNNrealTagList));
+		System.out.println(" DT acc is: " + AccuracyCalculator.calcAccuracy(testList, DTrealTagList));
 		
 		ResultsWriter.writeResults(DTrealTagList, KNNrealTagList, NBrealTagList, testList);
 	}
@@ -40,6 +40,19 @@ public class Main {
 			System.out.println("TAG is: " + f.getTag());
 
 		return testList; 
+	}
+	
+	// clone List<FeaturesAndTag> listToClone
+	private static List<FeaturesAndTag> cloneList(List<FeaturesAndTag> listToClone) {
+		List<FeaturesAndTag> toReturn = new ArrayList<>(); 
+		for (FeaturesAndTag f : listToClone) {
+			try {
+				toReturn.add((FeaturesAndTag) f.clone());
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
+		}
+		return toReturn;
 	}
 
 }

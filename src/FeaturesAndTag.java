@@ -11,6 +11,7 @@ public class FeaturesAndTag {
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
 		FeaturesAndTag f = new FeaturesAndTag(features, tag);
+		f.setTagKey(tagKey);
 		return f;
 	}
 
