@@ -11,7 +11,7 @@ public class Main {
 		List<FeaturesAndTag> trainingList = inputTextReaderTrain.getDataFromFile();
 		List<FeaturesAndTag> testList = inputTextReaderTest.getDataFromFile();
 		List<FeaturesAndTag> t = inputTextReaderTest.getDataFromFile();
-		List<FeaturesAndTag> NBrealTagList = Main.predictOnTest(trainingList, inputTextReaderTest.getDataFromFile(), new NaiveBase(trainingList));
+		List<FeaturesAndTag> NBrealTagList = Main.predictOnTest(trainingList, inputTextReaderTest.getDataFromFile(), new NaiveBayes(trainingList));
 		List<FeaturesAndTag> KNNrealTagList = Main.predictOnTest(trainingList, inputTextReaderTest.getDataFromFile(), new Knn(trainingList, 5));
 		List<FeaturesAndTag> DTrealTagList = Main.predictOnTest(trainingList, inputTextReaderTest.getDataFromFile(), new DecisionTree(trainingList));
 

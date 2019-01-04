@@ -2,7 +2,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NaiveBaseTest {
+public class NaiveBayesTest {
 
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
@@ -23,7 +23,7 @@ public class NaiveBaseTest {
 		for (FeaturesAndTag f : testList)
 			f.setTag("");
 
-		AbstractAlgorithm a = new NaiveBase(trainingList);
+		AbstractAlgorithm a = new NaiveBayes(trainingList);
 		a.predictOnTest(testList);
 		for (FeaturesAndTag f : testList)
 			System.out.println("TAG is: " + f.getTag());

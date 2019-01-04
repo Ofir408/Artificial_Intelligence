@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -8,21 +7,22 @@ import java.util.Map;
  * @author Ofir Ben Shoham. Class that implements Naive Base algorithm.
  *
  */
-public class NaiveBase extends AbstractAlgorithm {
+public class NaiveBayes extends AbstractAlgorithm {
 
-	public NaiveBase(List<FeaturesAndTag> trainingList) {
+	public NaiveBayes(List<FeaturesAndTag> trainingList) {
 		super(trainingList);
 	}
 
 	@Override
 	protected void predict(FeaturesAndTag inputFeatures) {
-		double bestProb = 0;
+		double bestProb = -100000;
 		String bestTag = "";
 
 		List<String> possibleTags = getPossibleTagOptions();
 		for (String tagValue : possibleTags) {
 			double tempResult = calcAllFeaturesProb(inputFeatures, inputFeatures.getTagKey(), tagValue)
 					* tagOccuranceCounter(tagValue);
+			System.out.println("tagOccuranceCounter(tagValue) is: " + tagOccuranceCounter(tagValue));
 			System.out.println("temp result is: " + tempResult);
 			if (tempResult > bestProb) {
 				System.out.println("here");
@@ -46,8 +46,14 @@ public class NaiveBase extends AbstractAlgorithm {
 	}
 
 	private int tagOccuranceCounter(String tagName) {
+		System.out.println("tag name is: " + tagName);
+		int counter=0; 
 		List<String> possibleTags = this.getPossibleTagOptions();
-		return Collections.frequency(possibleTags, tagName);
+		for (FeaturesAndTag f : trainingList)
+			if (tagName.equals(f.getTag()))
+					counter ++; 
+		System.out.println("Counter is: " + counter);
+		return counter; 
 	}
 
 	private List<String> getPossibleTagOptions() {
@@ -83,7 +89,7 @@ public class NaiveBase extends AbstractAlgorithm {
 		}
 		double temp = theSame / total;
 
-		return (temp + 1) / (tagOccuranceCounter(tagKey) + numOfFeatureValue);
+		return (temp + 1) / (tagOccuranceCounter(tagValue) + numOfFeatureValue);
 		//return temp;
 	}
 

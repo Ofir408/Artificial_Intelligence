@@ -14,13 +14,13 @@ Num	DT	KNN	naiveBase
 13	no	no	no
 14	no	no	no
 15	no	no	no
-16	no	no	no
+16	no	no	yes
 17	no	no	no
 18	yes	yes	yes
-19	no	no	no
+19	no	no	yes
 20	no	no	no
-21	no	no	no
-22	yes	yes	no
+21	no	no	yes
+22	yes	yes	yes
 23	no	no	no
 24	yes	yes	yes
 	0.88	0.88	0.83
