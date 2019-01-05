@@ -92,7 +92,7 @@ public class DecisionTree extends AbstractAlgorithm {
 	private double gain(List<FeaturesAndTag> updatedExamples, String decisionKey, String otherAttrKey) {
 		double gainResult = 0.0;
 		System.out.println("decisionKey is: " + decisionKey);
-		gainResult += entrofy(updatedExamples, decisionKey);
+		gainResult += entropy(updatedExamples, decisionKey);
 		System.out.println("gainResult is: " + gainResult);
 
 		List<String> otherAttrPossibleValues = getPossibleValueOptions(updatedExamples, otherAttrKey);
@@ -101,16 +101,16 @@ public class DecisionTree extends AbstractAlgorithm {
 			double currProb = (double) valueOccuranceCounter(updatedExamples, otherAttrKey, otherCurrentVal)
 					/ updatedExamplesLength;
 			List<FeaturesAndTag> updated = getPartialListAccordingValue(updatedExamples, otherAttrKey, otherCurrentVal);
-			double currEntropy = entrofy(updated, decisionKey);
+			double currEntropy = entropy(updated, decisionKey);
 			gainResult -= currProb * currEntropy;
 		}
 		return gainResult;
 	}
 
-	// calculate Entrofy(Decision | OtherAttr = something), when the
+	// calculate entropy(Decision | OtherAttr = something), when the
 	// updatedExamples list is the features that
 	// according OtherAttr = something.
-	private double entrofy(List<FeaturesAndTag> updatedExamples, String decisionKey) {
+	private double entropy(List<FeaturesAndTag> updatedExamples, String decisionKey) {
 		double result = 0.0;
 		List<String> keyPossibleValues = this.getPossibleValueOptions(updatedExamples, decisionKey);
 		for (String currentValue : keyPossibleValues) {
