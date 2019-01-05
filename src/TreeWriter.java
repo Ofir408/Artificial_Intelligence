@@ -47,9 +47,13 @@ public class TreeWriter {
 				str.append("\t");
 
 			if (attr.isLeaf()) {
-				str.append("| " + entry.getKey() + ":" + attr.getLeafValue() + "\n");
+				str.append("|" + entry.getKey() + ":" + attr.getLeafValue() + "\n");
 			} else {
-				str.append("| " + entry.getKey() + "\n");
+				if (fatherTabs != 0)
+					str.append("|" + entry.getKey() + "\n");
+				else
+					str.append(entry.getKey() + "\n");
+
 				TreeWriter.generateString(str, attr, fatherTabs + 1);
 			}
 		}
