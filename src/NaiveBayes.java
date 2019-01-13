@@ -49,12 +49,12 @@ public class NaiveBayes extends AbstractAlgorithm {
 
 	// return the tagOccuranceCounter of tagName on the training set.
 	private int tagOccuranceCounter(String tagName) {
-		System.out.println("tag name is: " + tagName);
+		//System.out.println("tag name is: " + tagName);
 		int counter=0; 
 		for (FeaturesAndTag f : trainingList)
 			if (tagName.equals(f.getTag()))
 					counter ++; 
-		System.out.println("Counter is: " + counter);
+		//System.out.println("Counter is: " + counter);
 		return counter; 
 	}
 
@@ -68,6 +68,21 @@ public class NaiveBayes extends AbstractAlgorithm {
 		}
 		return tags;
 	}
+	
+	// get possible value of attribute 
+	private int getPossibleValuesNum(String attribute) {
+		List<String> values = new ArrayList<>();
+		for (FeaturesAndTag f : trainingList) {
+			Map<String, String> m = f.getFeatures();
+			if (m.containsKey(attribute)) {
+				String currentValue = m.get(attribute);
+				if (!values.contains(currentValue))
+					values.add(currentValue);
+			}
+		}
+		return values.size();
+	}
+
 
 	// return the result of P(a | Tag)
 	private double calcProbability(String aKey, String a, String tagKey, String tagValue, int numOfFeatureValue) {
@@ -90,9 +105,14 @@ public class NaiveBayes extends AbstractAlgorithm {
 			System.out.println("total in NaiveBase : calcProbability() is zero");
 			return 1;
 		}
-		double temp = theSame / total;
-
-		return (temp + 1) / (tagOccuranceCounter(tagValue) + numOfFeatureValue);
+		//double temp = theSame / total;
+		double v =  (theSame + 1) / (tagOccuranceCounter(tagValue) + numOfFeatureValue);
+		System.out.println("N(X=xi, C = cj) =  " + theSame);
+		System.out.println("N( C = cj) =  " + (double) tagOccuranceCounter(tagValue));
+		System.out.println("k = " + numOfFeatureValue);
+		System.out.println("P(xi | cj) = " + v);
+		System.out.println("------------------------------");
+		return (theSame + 1.0) / ((double) tagOccuranceCounter(tagValue) + (double) numOfFeatureValue);
 		//return temp;
 	}
 
@@ -106,7 +126,9 @@ public class NaiveBayes extends AbstractAlgorithm {
 		for (Map.Entry<String, String> entry : featureAndValue.entrySet()) {
 			String featureKey = entry.getKey();
 			String featureValue = entry.getValue();
-			int numOfFeatureValue = this.valueOccuranceCounter(featureKey, featureValue);
+			int numOfFeatureValue = this.getPossibleValuesNum(featureKey);
+
+			//int numOfFeatureValue = this.valueOccuranceCounter(featureKey, featureValue);
 			probSum *= calcProbability(featureKey, featureValue, tagKey, tagValue, numOfFeatureValue);
 		}
 		System.out.println("probSum is: " + probSum);
