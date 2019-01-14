@@ -38,7 +38,7 @@ public class DecisionTree extends AbstractAlgorithm {
 			while (!keyDuplicate.isEmpty()) {
 				if (currentAttribute.isLeaf()) {
 					String tag = currentAttribute.getLeafValue();
-					System.out.println("set_the_tag");
+					// System.out.println("set_the_tag");
 					inputFeatures.setTag(tag);
 					return;
 				}
@@ -91,9 +91,8 @@ public class DecisionTree extends AbstractAlgorithm {
 	// Gain (Decision | otherAttrKey)
 	private double gain(List<FeaturesAndTag> updatedExamples, String decisionKey, String otherAttrKey) {
 		double gainResult = 0.0;
-		System.out.println("decisionKey is: " + decisionKey);
+		// System.out.println("decisionKey is: " + decisionKey);
 		gainResult += entropy(updatedExamples, decisionKey);
-		System.out.println("gainResult is: " + gainResult);
 
 		List<String> otherAttrPossibleValues = getPossibleValueOptions(updatedExamples, otherAttrKey);
 		int updatedExamplesLength = updatedExamples.size();
@@ -104,6 +103,7 @@ public class DecisionTree extends AbstractAlgorithm {
 			double currEntropy = entropy(updated, decisionKey);
 			gainResult -= currProb * currEntropy;
 		}
+		// System.out.println("gainResult is: " + gainResult);
 		return gainResult;
 	}
 
@@ -168,7 +168,8 @@ public class DecisionTree extends AbstractAlgorithm {
 		return counter;
 	}
 
-	// getPartialListAccordingValue of values the features that has key & valueToSearch
+	// getPartialListAccordingValue of values the features that has key &
+	// valueToSearch
 	private List<FeaturesAndTag> getPartialListAccordingValue(List<FeaturesAndTag> updatedList, String key,
 			String valueToSearch) {
 		List<FeaturesAndTag> partialList = new ArrayList<>();
@@ -186,6 +187,8 @@ public class DecisionTree extends AbstractAlgorithm {
 		List<String> featuresNames = new ArrayList<>();
 		List<FeaturesAndTag> trainingExamples = new ArrayList<>();
 		if (!trainingList.isEmpty()) {
+			Map<String, String> features = trainingList.get(0).getFeatures();
+
 			Set<String> names = trainingList.get(0).getFeatures().keySet();
 			for (String name : names)
 				featuresNames.add(name);
@@ -204,7 +207,7 @@ public class DecisionTree extends AbstractAlgorithm {
 		return createTreeRecursive(trainingExamples, featuresNames, trainingExamples.get(0).getTagKey(), "");
 
 	}
-	
+
 	// getMostFrequency tag in examples.
 	private String getMostFreq(List<FeaturesAndTag> examples) {
 		System.out.println("getMostFreq wad called");
@@ -215,7 +218,7 @@ public class DecisionTree extends AbstractAlgorithm {
 		String result = getMostFrequentFromList(tags);
 		return result;
 	}
-	
+
 	// given a list in length K, returns the most frequent value.
 	private <T> T getMostFrequentFromList(List<T> list) {
 		Map<T, Integer> map = new HashMap<>();
@@ -235,6 +238,8 @@ public class DecisionTree extends AbstractAlgorithm {
 	// the recursive function that creates the Decision tree.
 	private Attribute createTreeRecursive(List<FeaturesAndTag> examples, List<String> featureNames,
 			String lastChosenFeature, String fatherTag) {
+		System.out.println("featureNames are: " + featureNames);
+
 		// stop conditions
 		if (examples.size() == 0)
 			return new Attribute(new HashMap<>(), fatherTag);
@@ -254,21 +259,20 @@ public class DecisionTree extends AbstractAlgorithm {
 		// lastChosenFeature = bestGainFeature;
 		Attribute tree = new Attribute(new HashMap<>());
 		System.out.println("bestGainFeature is: " + bestGainFeature);
-		
+
 		List<String> possibleValueOfFeature = getPossibleValueOptions(trainingList, bestGainFeature);
 		List<String> fn = new ArrayList<String>(featureNames);
-				
+
 		for (String value : possibleValueOfFeature) {
 			featureNames = new ArrayList<String>(fn);
-			if (value.equals("crew"))
-				System.out.println("wewf");
-			
+
 			List<FeaturesAndTag> updatedExamples = getPartialListAccordingValue(examples, bestGainFeature, value);
 			featureNames.remove(bestGainFeature);
-			Attribute subTree = createTreeRecursive(updatedExamples, featureNames, lastChosenFeature, getMostFreq(examples));
-			System.out.println("value is: " + value);
+			Attribute subTree = createTreeRecursive(updatedExamples, featureNames, lastChosenFeature,
+					getMostFreq(examples));
+			// System.out.println("value is: " + value);
 			tree.addToMap(bestGainFeature, value, subTree);
-			System.out.println("Added to map");
+			// System.out.println("Added to map");
 		}
 		return tree;
 	}

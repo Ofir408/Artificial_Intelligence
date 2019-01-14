@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -16,7 +17,7 @@ public class FeaturesAndTag {
 	}
 
 	// members
-	private Map<String, String> features = new HashMap<String, String>();
+	private Map<String, String> features = new LinkedHashMap<String, String>();
 	private String tag, tagKey; 
 
 	// constructors.
