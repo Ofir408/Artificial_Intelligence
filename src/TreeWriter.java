@@ -12,6 +12,7 @@ import java.util.TreeMap;
  */
 public class TreeWriter {
 	private static final String fileName = "output_tree.txt";
+	private static final String lineSeperator = "\n";
 
 	// write to tree to the text file.
 	public static void writeToFile(Attribute attribute) {
@@ -35,7 +36,7 @@ public class TreeWriter {
 
 	// generate the string to write, result was saved into str.
 	private static void generateString(StringBuilder str, Attribute attribute, int fatherTabs) {
-		// System.out.println("here");
+
 		Map<String, Attribute> map = attribute.getMap();
 		if (map == null)
 			return;
@@ -48,18 +49,23 @@ public class TreeWriter {
 
 			if (attr.isLeaf()) {
 				if (fatherTabs == 0)
-					str.append( entry.getKey() + ":" + attr.getLeafValue() + "\n");
+					str.append( entry.getKey() + ":" + attr.getLeafValue() + lineSeperator);
 				else
-					str.append("|" + entry.getKey() + ":" + attr.getLeafValue() + "\n");
+					str.append("|" + entry.getKey() + ":" + attr.getLeafValue() + lineSeperator);
 			} else {
 				if (fatherTabs != 0)
-					str.append("|" + entry.getKey() + "\n");
+					str.append("|" + entry.getKey() + lineSeperator);
 				else
-					str.append(entry.getKey() + "\n");
+					str.append(entry.getKey() + lineSeperator);
 
 				TreeWriter.generateString(str, attr, fatherTabs + 1);
 			}
 		}
+		int lastCharInx =str.lastIndexOf(lineSeperator);
+		char lastChar = str.charAt(lastCharInx);
+
+		if (lastChar == '\n')
+			str.deleteCharAt(lastCharInx);
 	}
 	
 	private static Map<String, Attribute> orderAccordingAlphabetical(Map<String, Attribute> map ) {
