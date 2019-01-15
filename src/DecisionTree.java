@@ -187,7 +187,6 @@ public class DecisionTree extends AbstractAlgorithm {
 		List<String> featuresNames = new ArrayList<>();
 		List<FeaturesAndTag> trainingExamples = new ArrayList<>();
 		if (!trainingList.isEmpty()) {
-			Map<String, String> features = trainingList.get(0).getFeatures();
 
 			Set<String> names = trainingList.get(0).getFeatures().keySet();
 			for (String name : names)
@@ -210,7 +209,7 @@ public class DecisionTree extends AbstractAlgorithm {
 
 	// getMostFrequency tag in examples.
 	private String getMostFreq(List<FeaturesAndTag> examples) {
-		System.out.println("getMostFreq wad called");
+		System.out.println("getMostFreq was called");
 		List<String> tags = new ArrayList<>();
 		for (FeaturesAndTag f : examples) {
 			tags.add(f.getTag());
@@ -229,8 +228,17 @@ public class DecisionTree extends AbstractAlgorithm {
 		}
 		Entry<T, Integer> max = null;
 		for (Entry<T, Integer> e : map.entrySet()) {
+
+			if (max != null && max.getValue() == e.getValue()) {
+				String s = (String) e.getKey();
+				if (("yes".equals(s)) || "true".equals(s)) {
+					max = e;
+				}
+			}
+
 			if (max == null || e.getValue() > max.getValue())
 				max = e;
+
 		}
 		return max.getKey();
 	}

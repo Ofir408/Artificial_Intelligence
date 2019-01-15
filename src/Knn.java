@@ -51,7 +51,7 @@ public class Knn extends AbstractAlgorithm {
 			FeaturesAndTag value = withPricesList.get(i);
 			tagOfLowestPrices.add(value.getTag());
 		}
-		System.out.println("size of tagOfLowestPrices is: " + tagOfLowestPrices.size());
+		//System.out.println("size of tagOfLowestPrices is: " + tagOfLowestPrices.size());
 		String predTag = this.getMostFrequentFromList(tagOfLowestPrices);
 		inputFeatures.setTag(predTag);
 	}

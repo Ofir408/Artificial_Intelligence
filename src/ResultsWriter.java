@@ -33,7 +33,7 @@ public class ResultsWriter {
 		writer.append("naiveBase" + lineSeperator);
 
 		// write each line
-		String dtCurrentTag, knnCurrentTag, nbCurrentTag;
+		String dtCurrentTag, knnCurrentTag, nbCurrentTag; 
 		for (int rowNum = 0; rowNum < totalRowsToWrite; rowNum++) {
 			dtCurrentTag = getTag(dt.get(rowNum));
 			knnCurrentTag = getTag(knn.get(rowNum));
@@ -53,21 +53,19 @@ public class ResultsWriter {
 	private static void writeAccuracy(PrintWriter writer, List<FeaturesAndTag> real, List<FeaturesAndTag> predicted,
 			boolean isLast) {
 		double accuracy = AccuracyCalculator.calcAccuracy(real, predicted);
-		int accInt = (int) accuracy;
+		int accInt = (int) accuracy; 
 		DecimalFormat df = new DecimalFormat("#.00");
-		double temp = Double.parseDouble(String.valueOf(accInt) + df.format(accuracy));
 
-		if (df.format(accuracy).toCharArray()[2] >= 0.004999999)
-			accuracy -= 0.01;
-
-		if (Math.abs(temp - accInt) > 0) {
-			accuracy += 0.01;
-		}
 		if (isLast) {
-			// without writing the tag in the end.
-			writer.append(String.valueOf(accInt) + df.format(accuracy));
+			if (accInt == 1)
+				writer.append(df.format(accuracy));
+			else
+				writer.append(String.valueOf(accInt) + df.format(accuracy));
 		} else {
-			writer.append(String.valueOf(accInt) + df.format(accuracy) + seperator);
+			if (accInt == 1)
+				writer.append(df.format(accuracy) + seperator);
+			else
+				writer.append(String.valueOf(accInt) + df.format(accuracy) + seperator);
 		}
 	}
 

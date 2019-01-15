@@ -35,18 +35,6 @@ public class NaiveBayes extends AbstractAlgorithm {
 		inputFeatures.setTag(bestTag);
 	}
 
-	// return the valueOccuranceCounter of valueToSearch with key.
-	private int valueOccuranceCounter(String key, String valueToSearch) {
-		int counter = 0;
-		for (FeaturesAndTag f : trainingList) {
-			Map<String, String> currentMap = f.getFeatures();
-			if (currentMap.containsKey(key) && currentMap.get(key).equals(valueToSearch)) {
-				counter++;
-			}
-		}
-		return counter;
-	}
-
 	// return the tagOccuranceCounter of tagName on the training set.
 	private int tagOccuranceCounter(String tagName) {
 		//System.out.println("tag name is: " + tagName);

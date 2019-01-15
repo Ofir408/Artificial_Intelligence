@@ -2,7 +2,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Main {
+public class java_ex2 {
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		InputTextReader inputTextReaderTrain = new InputTextReader("train.txt");
@@ -11,9 +11,9 @@ public class Main {
 		List<FeaturesAndTag> trainingList = inputTextReaderTrain.getDataFromFile();
 		List<FeaturesAndTag> testList = inputTextReaderTest.getDataFromFile();
 		
-		List<FeaturesAndTag> KNNrealTagList = Main.predictOnTest(trainingList, cloneList(testList), new Knn(trainingList, 5));
-		List<FeaturesAndTag> DTrealTagList = Main.predictOnTest(trainingList, cloneList(testList), new DecisionTree(trainingList));
-		List<FeaturesAndTag> NBrealTagList = Main.predictOnTest(trainingList, cloneList(testList), new NaiveBayes(trainingList));
+		List<FeaturesAndTag> KNNrealTagList = java_ex2.predictOnTest(trainingList, cloneList(testList), new Knn(trainingList, 5));
+		List<FeaturesAndTag> DTrealTagList = java_ex2.predictOnTest(trainingList, cloneList(testList), new DecisionTree(trainingList));
+		List<FeaturesAndTag> NBrealTagList = java_ex2.predictOnTest(trainingList, cloneList(testList), new NaiveBayes(trainingList));
 
 		System.out.println(" NB acc is: " + AccuracyCalculator.calcAccuracy(testList, NBrealTagList));
 		System.out.println(" KNN acc is: " + AccuracyCalculator.calcAccuracy(testList, KNNrealTagList));

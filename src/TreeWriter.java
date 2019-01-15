@@ -29,6 +29,12 @@ public class TreeWriter {
 		StringBuilder s = new StringBuilder();
 
 		generateString(s, attribute,  0);
+		int lastCharInx =s.lastIndexOf(lineSeperator);
+		char lastChar = s.charAt(lastCharInx);
+
+		if (lastChar == '\n')
+			s.deleteCharAt(lastCharInx);
+
 		System.out.println("S is: \n" + s.toString());
 		writer.print(s);
 		writer.close();
@@ -61,11 +67,6 @@ public class TreeWriter {
 				TreeWriter.generateString(str, attr, fatherTabs + 1);
 			}
 		}
-		int lastCharInx =str.lastIndexOf(lineSeperator);
-		char lastChar = str.charAt(lastCharInx);
-
-		if (lastChar == '\n')
-			str.deleteCharAt(lastCharInx);
 	}
 	
 	private static Map<String, Attribute> orderAccordingAlphabetical(Map<String, Attribute> map ) {
